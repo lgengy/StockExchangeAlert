@@ -1,4 +1,5 @@
 import requests
+from globalVar import log
 
 
 class StockInfo(object):
@@ -27,13 +28,14 @@ class StockInfo(object):
         jsonData = response.json()
         StockInfo.stockData.append((jsonData["snap"][0], jsonData["code"], jsonData["snap"][5], jsonData["snap"][7], jsonData["snap"]
                                     [6], jsonData["snap"][1], jsonData["snap"][2], jsonData["snap"][3], jsonData["snap"][4], jsonData["time"]))
-        # log.log_write(log.LogInfo("{}({}) 现价：{:<7.2f} 涨幅：{:7s} 涨跌：{:<6.2f} 昨收：{:<7.2f} 开盘：{:<7.2f} 最高：{:<7.2f} 最低：{:<7.2f} 交易时间：{}".format(
-        #     jsonData["snap"][0], jsonData["code"], jsonData["snap"][5], jsonData["snap"][7], jsonData["snap"][6], jsonData["snap"][1], jsonData["snap"][2], jsonData["snap"][3], jsonData["snap"][4], jsonData["time"]), sep=""))
+        log.logger.info("{}({}) 现价：{:<7.2f} 涨幅：{:<7.2f} 涨跌：{:<6.2f} 昨收：{:<7.2f} 开盘：{:<7.2f} 最高：{:<7.2f} 最低：{:<7.2f} 交易时间：{}".format(
+            jsonData["snap"][0], jsonData["code"], jsonData["snap"][5], jsonData["snap"][7], jsonData["snap"][6], jsonData["snap"][1], jsonData["snap"][2], jsonData["snap"][3], jsonData["snap"][4], jsonData["time"]))
 
     def get_all_stock_info(self):
         """获取所有的股票信息."""
         for url in StockInfo.dictStock.values():
             StockInfo.__get_data(self, url)
+        log.logger.info("")
         StockInfo.stockData.sort(
             key=lambda stock: stock[3], reverse=True)  # 以涨幅进行排序
 

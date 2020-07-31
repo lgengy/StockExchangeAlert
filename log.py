@@ -1,33 +1,32 @@
-from datetime import datetime
+import logging
+import logging.handlers
+from pathlib import Path
 
 
 class Log(object):
-    """日志记录类"""
+    """日志类，封装了python自带的logging"""
 
-    def __init__(self, path, file_name, file_name_error):
-        """初始化日志路径、一般日志文件名和错误日志文件名"""
+    def __init__(self, log_directory, log_name):
+        self.__log_directory = log_directory
+        self.__log_name = log_name
+        if not Path(log_directory).exists():
+            Path(log_directory).mkdir()
 
-        self.log_path = path
-        self.file_name = file_name
-        self.file_name_error = file_name_error
+    def log_initialize(self):
+        self.logger = logging.getLogger(self.__log_name)
+        self.logger.setLevel(logging.DEBUG)
 
-    def log_write(self, log_info):
-        with open(self.log_path + "\\" + self.file_name, "at", encoding="UTF-8") as f:
-            print(log_info.time + "> " + log_info.content, file=f)
+        fileHandler = logging.handlers.RotatingFileHandler(
+            self.__log_directory + self.__log_name + ".log", mode="a", maxBytes=1024*1024*2, backupCount=20, encoding="UTF-8")
 
-    def log_error_write(self, log_info):
-        with open(self.log_path + "\\" + self.file_name_error, "at", encoding="UTF-8") as f:
-            print(log_info.time + "> " + log_info.content, file=f)
+        formatter = logging.Formatter(
+            "%(asctime)s - %(levelname)s - %(message)s")
+        fileHandler.setFormatter(formatter)
 
-    class LogInfo(object):
-        """日志信息类，保存日志写入时间和写入内容"""
-
-        def __init__(self, content):
-            self.time = datetime.now().strftime('%Y-%m-%d %H:%M:%S.%f')[:-3]
-            self.content = content
+        self.logger.addHandler(fileHandler)
 
 
-# log = Log("E:\\practice\\SSECrawier", "right", "wrong")
-
-# log.log_write(log.LogInfo("我还是对的"))
-# log.log_error_write(log.LogInfo("我还是错的"))
+# log = Log("E:\\practice\\SSECrawier\\log\\", "StockExchangeAlert")
+# log.log_initialize()
+# for i in range(1000):
+#     log.logger.info("我是第" + str(i) + "号")

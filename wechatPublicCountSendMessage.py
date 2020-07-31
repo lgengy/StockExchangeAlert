@@ -1,5 +1,6 @@
 import requests
 import json
+from globalVar import log
 
 
 class SendMessage(object):
@@ -47,3 +48,5 @@ class SendMessage(object):
 
         }
         requests.post(url=urlSendMessage, data=json.dumps(param)).text
+        log.logger.info("向用户：{} 发送消息：{}，股票：{}，现价：{}，时间：{}".format(
+            user_id, template_id, name, price, time))
