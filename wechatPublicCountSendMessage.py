@@ -5,8 +5,8 @@ from globalVar import log
 
 class SendMessage(object):
     """发送信息到微信"""
-    appid = "wx852da3a5f145aa40"
-    appsecret = "d501c592a2fed6b5daf4334322a55e5e"
+    appid = ""
+    appsecret = ""
     access_token = ""
 
     def get_access_token(self):

@@ -4,9 +4,10 @@ from stockInfo import StockInfo
 from wechatPublicCountSendMessage import SendMessage
 from cmdInteractive import SystemUI
 
-# interactive_prompt = SystemUI()  # 控制台界面初始化
-# interactive_prompt.interactive_start()  # 启动界面
-# x = interactive_prompt.get_monitored_stock_number()
+interactive_prompt = SystemUI()  # 控制台界面初始化
+interactive_prompt.interactive_start()  # 启动界面
+monitoredStock = interactive_prompt.get_monitored_stock_number()  # 要告警的股票，包括价位及其所在交易所
+
 token_time = int(str(time.time()).split(".")[0])  # 保存公众号token获取时间，以便每隔一段时间进行更新
 
 stockInfo = StockInfo(
