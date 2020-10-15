@@ -13,6 +13,8 @@ class StockInfo(object):
             monitoredStock:要监控的股票代码，格式为：股票代码[,股票代码]，字符串类型
         """
         self.monitoredStock = monitoredStock
+        self.s = requests.session()
+        self.s.keep_alive = False
 
         for stockNum in str.split(monitoredStock, ","):
             StockInfo.dictStock.setdefault(
@@ -24,15 +26,22 @@ class StockInfo(object):
         Args:
             url:股票的链接
         """
-        response = requests.get(url)
-        jsonData = response.json()
-        StockInfo.stockData.append((jsonData["snap"][0], jsonData["code"], jsonData["snap"][5], jsonData["snap"][7], jsonData["snap"]
-                                    [6], jsonData["snap"][1], jsonData["snap"][2], jsonData["snap"][3], jsonData["snap"][4], jsonData["time"]))
-        log.logger.info("{}({}) 现价：{:<7.2f} 涨幅：{:<7.2f} 涨跌：{:<6.2f} 昨收：{:<7.2f} 开盘：{:<7.2f} 最高：{:<7.2f} 最低：{:<7.2f} 交易时间：{}".format(
-            jsonData["snap"][0], jsonData["code"], jsonData["snap"][5], jsonData["snap"][7], jsonData["snap"][6], jsonData["snap"][1], jsonData["snap"][2], jsonData["snap"][3], jsonData["snap"][4], jsonData["time"]))
+        try:
+            response = self.s.get(url)
+            response.raise_for_status()
+            response.close()
+        except Exception as info:
+            log.logger.error(info)
+        else:
+            jsonData = response.json()
+            StockInfo.stockData.append((jsonData["snap"][0], jsonData["code"], jsonData["snap"][5], jsonData["snap"][7], jsonData["snap"]
+                                        [6], jsonData["snap"][1], jsonData["snap"][2], jsonData["snap"][3], jsonData["snap"][4], jsonData["time"]))
+            log.logger.info("{}({}) 现价：{:<7.2f} 涨幅：{:<7.2f} 涨跌：{:<6.2f} 昨收：{:<7.2f} 开盘：{:<7.2f} 最高：{:<7.2f} 最低：{:<7.2f} 交易时间：{}".format(
+                jsonData["snap"][0], jsonData["code"], jsonData["snap"][5], jsonData["snap"][7], jsonData["snap"][6], jsonData["snap"][1], jsonData["snap"][2], jsonData["snap"][3], jsonData["snap"][4], jsonData["time"]))
 
     def get_all_stock_info(self):
         """获取所有的股票信息."""
+        StockInfo.stockData.clear()
         for url in StockInfo.dictStock.values():
             StockInfo.__get_data(self, url)
         log.logger.info("")

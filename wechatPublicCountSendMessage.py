@@ -14,6 +14,7 @@ class SendMessage(object):
             SendMessage.appid + "&secret=" + SendMessage.appsecret
         res = requests.get(urlAccessToken)
         SendMessage.access_token = res.json()["access_token"]
+        log.logger.info("重新获取access token成功")
 
     def send_message(self, user_id, template_id, name, price, time):
         """把模板信息发送到指定用户
