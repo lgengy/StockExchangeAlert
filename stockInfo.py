@@ -7,18 +7,22 @@ class StockInfo(object):
     dictStock = {}  # 存放股票代码及查询链接
     stockData = []  # 存放获取到的股票信息
 
-    def __init__(self, monitoredStock):
+    def __init__(self, se, monitoredStock):
         """构造函数，初始化要监控的股票极其链接.
         Args:
-            monitoredStock:要监控的股票代码，格式为：股票代码[,股票代码]，字符串类型
+            se:交易所消息（交易所:链接），列表类型
+            monitoredStock:要监控的股票代码，字典类型，键为交易所名，值为股票代码列表
         """
         self.monitoredStock = monitoredStock
         self.s = requests.session()
         self.s.keep_alive = False
 
-        for stockNum in str.split(monitoredStock, ","):
-            StockInfo.dictStock.setdefault(
-                stockNum, "http://yunhq.sse.com.cn:32041//v1/sh1/snap/" + stockNum)
+        dict_se = {}
+        for el in se:
+            dict_se.update({el.split(': ')[0]: el.split(': ')[1]})
+        for key in monitoredStock:
+            for stockid in monitoredStock[key]:
+                StockInfo.dictStock.update({stockid: dict_se[key] + stockid})
 
     def __get_data(self, url):
         """获取股票数据.

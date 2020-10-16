@@ -4,16 +4,17 @@ from stockInfo import StockInfo
 from wechatPublicCountSendMessage import SendMessage
 from cmdInteractive import SystemUI
 
-# interactive_prompt = SystemUI()  # 控制台界面初始化
-# interactive_prompt.interactive_start()  # 启动界面
-# x = interactive_prompt.get_monitored_stock_number()
+interactive_prompt = SystemUI()  # 控制台界面初始化
+interactive_prompt.interactive_start()  # 启动界面
+stockSEandID = interactive_prompt.get_se_and_stock_id()
+stockIDandPrice = interactive_prompt.get_stock_id_and_price()
+
 token_time = int(str(time.time()).split(".")[0])  # 保存公众号token获取时间，以便每隔一段时间进行更新
 
-stockInfo = StockInfo(
-    "600685")
+stockInfo = StockInfo(interactive_prompt.get_stock_exchange(), stockSEandID)
 sendMessage = SendMessage()
 sendMessage.get_access_token()
-alert_price = {"600685": {33: 0, 33.3: 0}, }
+alert_price = stockIDandPrice
 for key in alert_price:
     log.logger.info("代码：" + key + "  告警价位：" + str(alert_price[key].keys()))
 
